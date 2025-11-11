@@ -1,5 +1,9 @@
 # PyGone Windows GUI Version
 
+## Download PyGone Windows GUI Version
+
+[Download pygone_combined.exe](https://github.com/kirabrassdaze/pygone/releases/download/pygone_combined_1.6.5_Windows/pygone_combined.exe)
+
 ## Project Overview
 
 This project is a fork of the [PyGone](https://github.com/scs-ben/pygone) chess engine version 1.6.5. PyGone is a chess engine written in Python, known for its compact code size.
