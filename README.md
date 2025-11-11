@@ -2,7 +2,7 @@
 
 ## Download PyGone Windows GUI Version
 
-[Download pygone_combined.exe](https://github.com/kirabrassdaze/pygone/releases/download/pygone_combined_1.6.5_Windows/pygone_combined.exe)
+[Download pygone_combined.exe](https://github.com/kirabrassdaze/pygone/releases/download/v1.6.5-Windows-GUI/pygone_combined.exe)
 
 ## Project Overview
 
