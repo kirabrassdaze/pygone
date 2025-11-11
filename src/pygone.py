@@ -1,4 +1,4 @@
-#!/usr/bin/env pypy3
+#!/usr/bin/env python
 import sys, time
 from search import Search
 from board import Board
@@ -6,36 +6,36 @@ from board import Board
 def print_to_terminal(print_string):
     print(print_string, flush=True)
 
-# def fen_to_board_state(fen):
-#     # Convert FEN into your engine's 120-square board representation.
-#     # Returns the board_state string and metadata (side, castling, ep).
-#     parts = fen.split()
-#     placement, side, castling, ep = parts[0], parts[1], parts[2], parts[3]
+def fen_to_board_state(fen):
+     # Convert FEN into your engine's 120-square board representation.
+     # Returns the board_state string and metadata (side, castling, ep).
+     parts = fen.split()
+     placement, side, castling, ep = parts[0], parts[1], parts[2], parts[3]
 
-#     # build 120-square board with sentinels (-1 border)
-#     board = [' '] * 120
-#     rows = placement.split('/')
+     # build 120-square board with sentinels (-1 border)
+     board = [' '] * 120
+     rows = placement.split('/')
 
-#     # The top of the board is rank 8 → index 21
-#     for rank_idx, row in enumerate(rows):
-#         file_idx = 0
-#         rank_start = 21 + rank_idx * 10
-#         for ch in row:
-#             if ch.isdigit():
-#                 file_idx += int(ch)
-#             else:
-#                 board[rank_start + file_idx] = ch
-#                 file_idx += 1
+     # The top of the board is rank 8 → index 21
+     for rank_idx, row in enumerate(rows):
+         file_idx = 0
+         rank_start = 21 + rank_idx * 10
+         for ch in row:
+             if ch.isdigit():
+                 file_idx += int(ch)
+             else:
+                 board[rank_start + file_idx] = ch
+                 file_idx += 1
 
-#     # Fill sentinels (outer border with '.')
-#     for i in range(120):
-#         if i < 20 or i >= 100 or i % 10 in (0, 9):
-#             board[i] = '.'
-#         elif board[i] == ' ':
-#             board[i] = '-'
+     # Fill sentinels (outer border with '.')
+     for i in range(120):
+         if i < 20 or i >= 100 or i % 10 in (0, 9):
+             board[i] = '.'
+         elif board[i] == ' ':
+             board[i] = '-'
 
-#     board_state = ''.join(board)
-#     return board_state, side, castling, ep
+     board_state = ''.join(board)
+     return board_state, side, castling, ep
 
 def main():
     game_board = Board()
@@ -53,24 +53,37 @@ def main():
                 searcher.reset()
             elif line == "isready":
                 print_to_terminal("readyok")
-            # elif line.startswith("position fen"):
-            #     parts = line.split() 
-            #     fen = " ".join(parts[2:])
+            elif line.startswith("setoption"):
+                # 简单处理setoption命令，至少不报错
+                pass
+            elif line.startswith("position fen"):
+                 parts = line.split() 
+                 # 检查是否包含moves关键字
+                 if "moves" in parts:
+                     moves_index = parts.index("moves")
+                     fen = " ".join(parts[2:moves_index])
+                     moves = parts[moves_index+1:]
+                 else:
+                     fen = " ".join(parts[2:])
+                     moves = []
                 
-            #     game_board.board_state, side, castling, ep = fen_to_board_state(fen)
-            #     game_board.en_passant = ep if ep != '-' else None
-            #     game_board.white_to_move = (side == 'w')
-            #     game_board.played_move_count = 0 if game_board.white_to_move else 1
+                 game_board.board_state, side, castling, ep = fen_to_board_state(fen)
+                 game_board.en_passant = ep if ep != '-' else None
+                 game_board.white_to_move = (side == 'w')
+                 game_board.played_move_count = 0 if game_board.white_to_move else 1
 
-            #     # if you track castling rights as [KQ, kq]
-            #     game_board.white_castling = ['K' in castling, 'Q' in castling]
-            #     game_board.black_castling = ['k' in castling, 'q' in castling]
+                 # if you track castling rights as [KQ, kq]
+                 game_board.white_castling = ['K' in castling, 'Q' in castling]
+                 game_board.black_castling = ['k' in castling, 'q' in castling]
                 
-            # elif line.startswith("print"):
-            #     for row in range(12):
-            #         position = row * 10
-            #         print(game_board.board_state[position:position+10])
-            #     print(game_board.played_move_count, game_board.in_check(game_board.played_move_count % 2 == 0))
+                 # 应用所有走棋
+                 for move in moves:
+                     game_board = game_board.make_move(move)
+            elif line.startswith("print"):
+                 for row in range(12):
+                     position = row * 10
+                     print(game_board.board_state[position:position+10])
+                 print(game_board.played_move_count, game_board.in_check(game_board.played_move_count % 2 == 0))
             elif line.startswith("position"):
                 moves = line.split()
                 game_board = Board()
